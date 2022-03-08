@@ -12,20 +12,6 @@ with open('Milestone2\Milestone2B.yaml') as f:
     mil_1b = yaml.load(f, Loader = yaml.FullLoader)
 
 dict = {}
-
-def symbols(a, b, sym):
-    if sym == '<':
-        return operator.lt(a, b) > 0
-    elif sym == '>':
-        return operator.gt(a, b) > 0
-    elif sym == '<=':
-        return operator.le(a, b) > 0
-    elif sym == '>=':
-        return operator.ge(a, b) > 0
-    elif sym == '==':
-        return operator.eq(a, b) > 0
-    else:
-        return operator.ne(a, b) > 0
     
 
 def task_func(tasks, log, i, file):
@@ -53,16 +39,14 @@ def task_func(tasks, log, i, file):
         f1 = tasks[i]['Condition'].split()[0][2:-1]
         c = tasks[i]['Condition'].split()[2]
         sym = tasks[i]['Condition'].split()[1]
-        print(symbols(dict[f1], c, sym))
-        if symbols(dict[f1], c, sym):
+        print(f1)
+        if eval(str(dict[f1]) + sym + c):
             file1 = 'Milestone2\\' + tasks[i]['Inputs']['Filename']
             with open(file1, 'r') as csvfile:
                 csvreader = csv.reader(csvfile)
                 nod = 0
                 for row in csvreader:
                     nod += 1
-                # headers = next(csvreader)
-                # nod = csvreader.line_num
                 csvfile.close()
             tasks[i]['Outputs'][1] = nod - 1
             dict[log[int(log.index(';')) + 1:len(log) - 7] + '.' + str(i) + '.' + str('NoOfDefects')] = nod - 1
@@ -91,7 +75,7 @@ def task_func(tasks, log, i, file):
         c = tasks[i]['Condition'].split()[2]
         sym = tasks[i]['Condition'].split()[1]
         
-        if symbols(dict[f1], c, sym):
+        if eval(str(dict[f1]) + sym + c):
             with open(file, 'a', encoding = 'UTF8') as f:    
                 log1 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Entry' + '\n'
                 f.write(log1)
@@ -122,7 +106,6 @@ def task_func(tasks, log, i, file):
             log3 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Exit' + '\n'
             f.write(log3)
             f.close()
-        
             
 
 def flow_func_conc(tasks, log, i , file):
