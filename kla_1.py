@@ -1,12 +1,16 @@
 import yaml
 import datetime
 import time
+import threading
 
-with open('Milestone1\Milestone1B.yaml') as f:
+with open('Milestone1\Milestone1A.yaml') as f:
     mil_1a = yaml.load(f, Loader = yaml.FullLoader)
+    
+with open('Milestone1\Milestone1B.yaml') as f:
+    mil_1b = yaml.load(f, Loader = yaml.FullLoader)
 
-def task_func(tasks, log, i):
-    with open('Log_mil1A.txt', 'a', encoding = 'UTF8') as f:
+def task_func(tasks, log, i, file):
+    with open(file, 'a', encoding = 'UTF8') as f:
         log1 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Entry' + '\n'
         f.write(log1)
         time.sleep(int(tasks[i]['Inputs']['ExecutionTime']))
@@ -16,23 +20,23 @@ def task_func(tasks, log, i):
         f.write(log3)
         f.close()
 
-def flow_func(tasks, log, i):
-    with open('Log_mil1A.txt', 'a', encoding = 'UTF8') as f:
+def flow_func(tasks, log, i, file):
+    with open(file, 'a', encoding = 'UTF8') as f:
         log1 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Entry' + '\n'
         f.write(log1)
         f.close()
     for x in tasks[i]['Activities']:
         if tasks[i]['Activities'][x]['Type'] == 'Task':
-            task_func(tasks[i]['Activities'], log1, x)
+            task_func(tasks[i]['Activities'], log1, x, file)
         if tasks[i]['Activities'][x]['Type'] == 'Flow':
-            flow_func(tasks[i]['Activities'], log1, x)
-    with open('Log_mil1A.txt', 'a', encoding = 'UTF8') as f:
+            flow_func(tasks[i]['Activities'], log1, x, file)
+    with open(file, 'a', encoding = 'UTF8') as f:
         log2 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Exit' + '\n'
         f.write(log2)
         f.close()
             
-def milestone1(data):
-    with open('Log_mil1A.txt', 'w', encoding = 'UTF8') as f:
+def milestone1(data, file):
+    with open(file, 'w', encoding = 'UTF8') as f:
         log = str(datetime.datetime.now()) + ';' + str(list(data)[0]) + ' ' + str('Entry') + '\n'
         f.write(log)
         f.close()
@@ -40,18 +44,18 @@ def milestone1(data):
     activities = data[str(list(data)[0])]['Activities']
     for i in activities:
         if activities[i]['Type'] == 'Task':
-            task_func(activities, log, i)
+            task_func(activities, log, i, file)
         
         if activities[i]['Type'] == 'Flow':
-            flow_func(activities, log, i)
+            flow_func(activities, log, i,  file)
             
-    with open('Log_mil1A.txt', 'a', encoding = 'UTF8') as f:
+    with open(file, 'a', encoding = 'UTF8') as f:
         log_exit = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + ' Exit'
         f.write(log_exit)
         f.close()
                 
-print(milestone1(mil_1a))
-    
+print(milestone1(mil_1a, 'Log_mil1A.txt'))
+print(milestone1(mil_1b, 'Log_mil1B.txt'))
     
     
     
