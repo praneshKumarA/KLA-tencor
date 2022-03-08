@@ -31,12 +31,10 @@ def flow_func_conc(tasks, log, i , file):
             t = threading.Thread(target = task_func, args = (tasks[i]['Activities'], log1, x, file, ))
             t.start()
             threads.append(t)
-            # task_func(tasks[i]['Activities'], log1, x, file)
         if tasks[i]['Activities'][x]['Type'] == 'Flow':
             t = threading.Thread(target = flow_func, args = (tasks[i]['Activities'], log1, x, file, ))
             t.start()
             threads.append(t)
-            # flow_func(tasks[i]['Activities'], log1, x, file)
     for thread in threads:
         thread.join()
     with open(file, 'a', encoding = 'UTF8') as f:
@@ -87,6 +85,3 @@ def milestone1(data, file):
                 
 print(milestone1(mil_1a, 'Log_mil1A.txt'))
 print(milestone1(mil_1b, 'Log_mil1B.txt'))
-    
-    
-    
