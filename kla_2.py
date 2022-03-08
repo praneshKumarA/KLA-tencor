@@ -15,17 +15,17 @@ dict = {}
 
 def symbols(a, b, sym):
     if sym == '<':
-        return operator.lt(a, b)
+        return operator.lt(a, b) != 0
     elif sym == '>':
-        return operator.gt(a, b)
+        return operator.gt(a, b) != 0
     elif sym == '<=':
-        return operator.le(a, b)
+        return operator.le(a, b) != 0
     elif sym == '>=':
-        return operator.ge(a, b)
+        return operator.ge(a, b) != 0
     elif sym == '==':
-        return operator.eq(a, b)
+        return operator.eq(a, b) != 0
     else:
-        return operator.ne(a, b)
+        return operator.ne(a, b) != 0
     
 
 def task_func(tasks, log, i, file):
@@ -33,12 +33,15 @@ def task_func(tasks, log, i, file):
         file1 = 'Milestone2\\' + tasks[i]['Inputs']['Filename']
         with open(file1, 'r') as csvfile:
             csvreader = csv.reader(csvfile)
-            nod = csvreader.line_num
+            nod = 0
+            for row in csvreader:
+                nod += 1
+            # nod = csvreader.line_num
             csvfile.close()
-        tasks[i]['Outputs'][1] = nod
+        tasks[i]['Outputs'][1] = nod - 1
+        dict[log[log.index(';') + 1:len(log) - 7] + '.' + str(i) + '.' + str('NoOfDefects')] = nod - 1
         with open(file, 'a', encoding = 'UTF8') as f:
             log1 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Entry' + '\n'
-            dict[log[log.index(';'):len(log) - 7] + '.' + str(i) + '.' + str('NoOfDetects')] = nod
             f.write(log1)
             log2 = str(datetime.datetime.now()) + log1[log1.index(';'):len(log) - 7] + '.' + str(i) + ' Executing ' + str(tasks[i]['Function']) + '(' + str(tasks[i]['Inputs']['Filename']) + ')' + '\n'
             f.write(log2)
@@ -54,14 +57,16 @@ def task_func(tasks, log, i, file):
             file1 = 'Milestone2\\' + tasks[i]['Inputs']['Filename']
             with open(file1, 'r') as csvfile:
                 csvreader = csv.reader(csvfile)
-                headers = next(csvreader)
-                nod = csvreader.line_num
+                nod = 0
+                for row in csvreader:
+                    nod += 1
+                # headers = next(csvreader)
+                # nod = csvreader.line_num
                 csvfile.close()
-            # tasks[i]['Outputs'][1] = nod
-            dict[log[int(log.index(';')) + 1:len(log) - 7] + '.' + str(i) + '.' + str('NoOfDetects')] = nod
+            tasks[i]['Outputs'][1] = nod - 1
+            dict[log[int(log.index(';')) + 1:len(log) - 7] + '.' + str(i) + '.' + str('NoOfDefects')] = nod - 1
             with open(file, 'a', encoding = 'UTF8') as f:
                 log1 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Entry' + '\n'
-                # dict[log[log.index(';'):len(log) - 7] + '.' + str(i) + '.' + str('NoOfDetects')] = nod
                 f.write(log1)
                 log2 = str(datetime.datetime.now()) + log1[log1.index(';'):len(log) - 7] + '.' + str(i) + ' Executing ' + str(tasks[i]['Function']) + '(' + str(tasks[i]['Inputs']['Filename']) + ')' + '\n'
                 f.write(log2)
@@ -187,8 +192,7 @@ def milestone1(data, file):
                 
 
 print(milestone1(mil_1a, 'Milestone2\Log_mil2A.txt'))
-print(dict)
-# print(milestone1(mil_1b, 'Milestone2\Log_mil2B.txt'))
+print(milestone1(mil_1b, 'Milestone2\Log_mil2B.txt'))
     
     
     
