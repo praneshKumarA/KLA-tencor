@@ -15,17 +15,17 @@ dict = {}
 
 def symbols(a, b, sym):
     if sym == '<':
-        return operator.lt(a, b) != 0
+        return operator.lt(a, b) > 0
     elif sym == '>':
-        return operator.gt(a, b) != 0
+        return operator.gt(a, b) > 0
     elif sym == '<=':
-        return operator.le(a, b) != 0
+        return operator.le(a, b) > 0
     elif sym == '>=':
-        return operator.ge(a, b) != 0
+        return operator.ge(a, b) > 0
     elif sym == '==':
-        return operator.eq(a, b) != 0
+        return operator.eq(a, b) > 0
     else:
-        return operator.ne(a, b) != 0
+        return operator.ne(a, b) > 0
     
 
 def task_func(tasks, log, i, file):
@@ -53,6 +53,7 @@ def task_func(tasks, log, i, file):
         f1 = tasks[i]['Condition'].split()[0][2:-1]
         c = tasks[i]['Condition'].split()[2]
         sym = tasks[i]['Condition'].split()[1]
+        print(symbols(dict[f1], c, sym))
         if symbols(dict[f1], c, sym):
             file1 = 'Milestone2\\' + tasks[i]['Inputs']['Filename']
             with open(file1, 'r') as csvfile:
