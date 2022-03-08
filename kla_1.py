@@ -20,6 +20,30 @@ def task_func(tasks, log, i, file):
         f.write(log3)
         f.close()
 
+def flow_func_conc(tasks, log, i , file):
+    with open(file, 'a', encoding = 'UTF8') as f:
+        log1 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Entry' + '\n'
+        f.write(log1)
+        f.close()
+    threads = []
+    for x in tasks[i]['Activities']:
+        if tasks[i]['Activities'][x]['Type'] == 'Task':
+            t = threading.Thread(target = task_func, args = (tasks[i]['Activities'], log1, x, file, ))
+            t.start()
+            threads.append(t)
+            # task_func(tasks[i]['Activities'], log1, x, file)
+        if tasks[i]['Activities'][x]['Type'] == 'Flow':
+            t = threading.Thread(target = flow_func, args = (tasks[i]['Activities'], log1, x, file, ))
+            t.start()
+            threads.append(t)
+            # flow_func(tasks[i]['Activities'], log1, x, file)
+    for thread in threads:
+        thread.join()
+    with open(file, 'a', encoding = 'UTF8') as f:
+        log2 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Exit' + '\n'
+        f.write(log2)
+        f.close()
+
 def flow_func(tasks, log, i, file):
     with open(file, 'a', encoding = 'UTF8') as f:
         log1 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Entry' + '\n'
@@ -28,8 +52,12 @@ def flow_func(tasks, log, i, file):
     for x in tasks[i]['Activities']:
         if tasks[i]['Activities'][x]['Type'] == 'Task':
             task_func(tasks[i]['Activities'], log1, x, file)
-        if tasks[i]['Activities'][x]['Type'] == 'Flow':
+        if tasks[i]['Activities'][x]['Type'] == 'Flow' and tasks[i]['Activities'][x]['Execution'] == 'Sequential':
             flow_func(tasks[i]['Activities'], log1, x, file)
+        if tasks[i]['Activities'][x]['Type'] == 'Flow' and tasks[i]['Activities'][x]['Execution'] == 'Concurrent':
+            flow_func_conc(tasks[i]['Activities'], log1, x, file)
+        
+        
     with open(file, 'a', encoding = 'UTF8') as f:
         log2 = str(datetime.datetime.now()) + log[log.index(';'):len(log) - 7] + '.' + str(i) + ' Exit' + '\n'
         f.write(log2)
@@ -40,13 +68,16 @@ def milestone1(data, file):
         log = str(datetime.datetime.now()) + ';' + str(list(data)[0]) + ' ' + str('Entry') + '\n'
         f.write(log)
         f.close()
-        
+
     activities = data[str(list(data)[0])]['Activities']
     for i in activities:
         if activities[i]['Type'] == 'Task':
             task_func(activities, log, i, file)
         
-        if activities[i]['Type'] == 'Flow':
+        if activities[i]['Type'] == 'Flow' and activities[i]['Execution'] == 'Concurrent':
+            flow_func_conc(activities, log, i,  file)
+        
+        if activities[i]['Type'] == 'Flow' and activities[i]['Execution'] == 'Sequential':
             flow_func(activities, log, i,  file)
             
     with open(file, 'a', encoding = 'UTF8') as f:
